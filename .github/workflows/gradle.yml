@@ -21,15 +21,15 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Generate coverage reports
-      run: ./gradlew aggregateJacocoReport
+      run: ./gradlew rx-datastore-android:jacocoTestReport
     - name: Add coverage to PR
       id: jacoco
       continue-on-error: true
       uses: madrapps/jacoco-report@v1.1
       with:
-        path: ${{ github.workspace }}/build/reports/jacoco/aggregate/jacocoTestReport.xml
+        path: ${{ github.workspace }}/rx-datastore-android/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload codecov
       uses: codecov/codecov-action@v1
       with:
-        files: ${{ github.workspace }}/build/reports/jacoco/aggregate/jacocoTestReport.xml
+        files: ${{ github.workspace }}/rx-datastore-android/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml

@@ -103,3 +103,54 @@ plugins.withType<com.vanniktech.maven.publish.MavenPublishBasePlugin>() {
         }
     }
 }
+
+jacoco {
+    toolVersion = "0.8.3"
+}
+
+tasks.create("jacocoTestReport", JacocoReport::class.java) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports."
+
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*"
+    )
+
+    // sourceDirectories.setFrom(files(listOf("$projectDir/src/main/java")))
+    classDirectories.setFrom(
+        files(
+            listOf(
+                fileTree(
+                    "dir" to "$buildDir/intermediates/javac/debug",
+                    "excludes" to fileFilter
+                ),
+                fileTree(
+                    "dir" to "$buildDir/tmp/kotlin-classes/debug",
+                    "excludes" to fileFilter
+                )
+            )
+        )
+    )
+
+    // execution data from both unit and instrumentation tests
+    executionData.setFrom(
+        fileTree(
+            "dir" to project.buildDir,
+            "includes" to listOf(
+                // unit tests
+                "jacoco/testDebugUnitTest.exec",
+                // instrumentation tests
+                "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
+            )
+        )
+    )
+}
